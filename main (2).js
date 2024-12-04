@@ -29,26 +29,36 @@ console.log('#14. JavaScript homework example file')
 */
 
 async function getData(segment) {
-  const baseUrl = 'https://jsonplaceholder.typicode.com'; // базовий URL
-  const url = baseUrl + segment; // повний URL з сегментом шляху
+  const baseUrl = 'https://jsonplaceholder.typicode.com';
+  const url = `${baseUrl}${segment}`;
 
   try {
-    const response = await fetch(url); // асинхронний запит до API
+      const response = await fetch(url);
+      if (!response.ok) {
+          console.error(`Error: ${response.status}`);
+          return `Error: ${response.status}`;
+      }
 
-    // Перевірка статусу відповіді
-    if (response.ok) {
-      const data = await response.json(); // конвертуємо відповідь у формат JSON
-      console.log(data); // логування отриманих даних
+      const data = await response.json();
+      console.log('Response data:', data);
       return data;
-    } else {
-      console.error(`HTTP Error: ${response.status}`); // логування помилки з HTTP статусом
-      return response.status; // повертаємо HTTP статус помилки
-    }
   } catch (error) {
-    console.error('Error during fetch operation:', error); // логування помилки
-    return error.message; // повертаємо текст помилки
+      console.error('Fetch error:', error);
+      return `Fetch error: ${error.message}`;
   }
 }
+
+// Приклад використання
+getData('/posts')
+  .then(data => {
+      if (typeof data === 'string' && data.startsWith('Error')) {
+          console.log('An error occurred:', data);
+      } else {
+          console.log('Data received:', data);
+      }
+  });
+
+
 // Базовий URL та сегмент шляху: Спочатку створюємо повний URL, додаючи до базового шляху segment, який передається у функцію.
 // Асинхронний запит: Використовуємо fetch для виконання HTTP GET запиту. Оскільки це асинхронна операція, ми використовуємо await для отримання результату.
 // Обробка відповіді:
