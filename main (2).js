@@ -344,23 +344,6 @@ patchData(1, updatedPostData)  // Оновлення поста з іденти�
       }
   });
 
-  // Якщо змінна вже оголошена раніше
-updatedData = {
-  title: 'Updated Title',  // Тільки оновлення заголовка
-};
-
-patchData(1, updatedData)  // Оновлення поста з ідентифікатором 1
-  .then(data => {
-      if (typeof data === 'string' && data.startsWith('Error')) {
-          // Обробка помилки, якщо є
-          console.log('An error occurred:', data);
-      } else {
-          // Обробка отриманих даних
-          console.log('Updated data received:', data);
-      }
-  });
-
-
 
 
 /*
