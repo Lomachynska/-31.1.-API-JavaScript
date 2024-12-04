@@ -59,6 +59,7 @@ getData('/posts')
   });
 
 
+
 // Базовий URL та сегмент шляху: Спочатку створюємо повний URL, додаючи до базового шляху segment, який передається у функцію.
 // Асинхронний запит: Використовуємо fetch для виконання HTTP GET запиту. Оскільки це асинхронна операція, ми використовуємо await для отримання результату.
 // Обробка відповіді:
@@ -107,14 +108,89 @@ getData('/posts') // отримуємо список постів
  *
 */
 
-async function postData(segment, data) {
-  try {
-    // const response = await fetch(...)
-    // code here
-  } catch (error) {
-    // code here
-  }
+// Функція для виконання POST запиту до API
+async function postToAPI(segment, data) {
+    const baseUrl = 'https://jsonplaceholder.typicode.com';
+    const url = `${baseUrl}${segment}`;
+
+    try {
+        // Виконання POST запиту
+        const response = await fetch(url, {
+            method: 'POST', // Встановлюємо метод запиту POST
+            headers: {
+                'Content-Type': 'application/json', // Заголовок для передачі JSON даних
+            },
+            body: JSON.stringify(data), // Перетворюємо об'єкт в JSON для відправки
+        });
+
+        // Перевірка статусу відповіді
+        if (!response.ok) {
+            // Якщо статус не в межах 200-299, повертаємо повідомлення про помилку
+            console.error(`Error: ${response.status}`);
+            return `Error: ${response.status}`;
+        }
+
+        // Перетворення відповіді в JSON
+        const responseData = await response.json();
+
+        // Логування результату
+        console.log('Response data:', responseData);
+
+        // Повернення отриманих даних
+        return responseData;
+    } catch (error) {
+        // Логування помилки в процесі виконання запиту
+        console.error('Fetch error:', error);
+        return `Fetch error: ${error.message}`;
+    }
 }
+
+// Приклад використання
+const postData = {
+    title: 'foo',
+    body: 'bar',
+    userId: 1
+};
+
+postToAPI('/posts', postData)
+    .then(data => {
+        if (typeof data === 'string' && data.startsWith('Error')) {
+            // Обробка помилки, якщо є
+            console.log('An error occurred:', data);
+        } else {
+            // Обробка отриманих даних
+            console.log('Data received:', data);
+        }
+    });
+
+//Вхідні параметри:
+//segment: шлях до ресурсу API, наприклад, /posts.
+//data: об'єкт, що містить дані для відправки у тілі запиту.
+
+//Виконання POST запиту:
+//За допомогою fetch відправляється запит на зазначений URL.
+//Заголовок Content-Type: application/json вказує, що тіло запиту має бути в форматі JSON.
+//Тіло запиту (body) перетворюється в JSON за допомогою JSON.stringify(data).
+
+//Обробка відповіді:
+//Якщо відповідь успішна (статус HTTP 200-299), перетворюється на JSON і логуються отримані дані.
+//Якщо статус відповіді вказує на помилку (наприклад, 400 або 500), виводиться повідомлення з HTTP статусом.
+
+//Логування:
+//Логуються як успішні відповіді, так і помилки при запиті.
+//Якщо запит не вдався, помилка буде виведена в консоль.
+
+//Як працює:
+//Функція postToAPI відправляє POST запит на сервер з даними, вказаними в параметрі data.
+//В залежності від результату запиту (успіх чи помилка), ви отримуєте дані або повідомлення про помилку в консолі.
+
+//Приклад використання:
+//У даному завдані відправляється POST запит для створення нового поста на сервері з параметрами { title: 'foo', body: 'bar', userId: 1 }.
+//Результат обробляється в .then(), де можна перевірити, чи це помилка, або успішний відповідь із даними.
+
+
+
+
 
 /*
  *
@@ -142,14 +218,52 @@ async function postData(segment, data) {
  *
  */
 
+
+/// Оголошення функції без використання export
 async function putData(id, data) {
+  const baseUrl = 'https://jsonplaceholder.typicode.com';
+  const url = `${baseUrl}/posts/${id}`;
+
   try {
-    // const response = await fetch(...)
-    // code here
+      const response = await fetch(url, {
+          method: 'PUT',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+          console.error(`Error: ${response.status}`);
+          return `Error: ${response.status}`;
+      }
+
+      const responseData = await response.json();
+      console.log('Response data:', responseData);
+      return responseData;
   } catch (error) {
-    // code here
+      console.error('Fetch error:', error);
+      return `Fetch error: ${error.message}`;
   }
 }
+
+// Приклад використання функції
+const updatedData = {
+  title: 'Updated Title',
+  body: 'Updated body content',
+  userId: 1
+};
+
+putData(1, updatedData)
+  .then(data => {
+      if (typeof data === 'string' && data.startsWith('Error')) {
+          console.log('An error occurred:', data);
+      } else {
+          console.log('Updated data received:', data);
+      }
+  });
+
+
 
 /*
  *
@@ -177,14 +291,77 @@ async function putData(id, data) {
  *
  */
 
+// Функція для виконання PATCH запиту для оновлення частини об'єкта
 async function patchData(id, data) {
+  const baseUrl = 'https://jsonplaceholder.typicode.com';
+  const url = `${baseUrl}/posts/${id}`; // Формуємо URL з ідентифікатором
+
   try {
-    // const response = await fetch(...)
-    // code here
+      // Виконання PATCH запиту
+      const response = await fetch(url, {
+          method: 'PATCH', // Встановлюємо метод запиту PATCH
+          headers: {
+              'Content-Type': 'application/json', // Заголовок для передачі JSON даних
+          },
+          body: JSON.stringify(data), // Перетворюємо об'єкт в JSON для відправки
+      });
+
+      // Перевірка статусу відповіді
+      if (!response.ok) {
+          // Якщо статус не в межах 200-299, повертаємо повідомлення про помилку
+          console.error(`Error: ${response.status}`);
+          return `Error: ${response.status}`;
+      }
+
+      // Перетворення відповіді в JSON
+      const responseData = await response.json();
+
+      // Логування результату
+      console.log('Response data:', responseData);
+
+      // Повернення отриманих даних
+      return responseData;
   } catch (error) {
-    // code here
+      // Логування помилки в процесі виконання запиту
+      console.error('Fetch error:', error);
+      return `Fetch error: ${error.message}`;
   }
 }
+
+// Оголошення змінної з іншим іменем
+const updatedPostData = {
+  title: 'Updated Title',  // Тільки оновлення заголовка
+};
+
+patchData(1, updatedPostData)  // Оновлення поста з ідентифікатором 1
+  .then(data => {
+      if (typeof data === 'string' && data.startsWith('Error')) {
+          // Обробка помилки, якщо є
+          console.log('An error occurred:', data);
+      } else {
+          // Обробка отриманих даних
+          console.log('Updated data received:', data);
+      }
+  });
+
+  // Якщо змінна вже оголошена раніше
+updatedData = {
+  title: 'Updated Title',  // Тільки оновлення заголовка
+};
+
+patchData(1, updatedData)  // Оновлення поста з ідентифікатором 1
+  .then(data => {
+      if (typeof data === 'string' && data.startsWith('Error')) {
+          // Обробка помилки, якщо є
+          console.log('An error occurred:', data);
+      } else {
+          // Обробка отриманих даних
+          console.log('Updated data received:', data);
+      }
+  });
+
+
+
 
 /*
  *
@@ -214,13 +391,44 @@ async function patchData(id, data) {
  *
  */
 
-async function deleteData(id) {
+// Функція для видалення ресурсу за ідентифікатором
+export async function deletePost(id) {
+  const url = `https://jsonplaceholder.typicode.com/posts/${id}`;  // Формуємо URL для DELETE запиту
+
   try {
-    // const response = await fetch(...)
-    // code here
+      // Виконання DELETE запиту
+      const response = await fetch(url, {
+          method: 'DELETE',  // Встановлюємо метод запиту DELETE
+      });
+
+      // Перевірка статусу відповіді
+      if (response.ok) {
+          // У разі успіху логуємо успішне повідомлення
+          console.log(`Post with id ${id} has been successfully deleted.`);
+          return true;  // Повертаємо true, якщо видалення пройшло успішно
+      } else {
+          // У разі помилки логуємо повідомлення з помилкою
+          console.error(`Failed to delete post with id ${id}. Status: ${response.status}`);
+          return `Failed to delete post. Status: ${response.status}`;  // Повертаємо статус помилки
+      }
   } catch (error) {
-    // code here
+      // Логування помилки в разі проблем із запитом
+      console.error(`Error during deletion: ${error.message}`);
+      return `Error during deletion: ${error.message}`;  // Повертаємо текст помилки
   }
 }
 
-export { getData, postData, putData, patchData, deleteData }
+// Приклад використання
+deletePost(1)  // Видалення поста з ідентифікатором 1
+  .then(result => {
+      if (result === true) {
+          // Успішне видалення
+          console.log('Post deleted successfully!');
+      } else {
+          // Помилка під час видалення
+          console.log(result);
+      }
+  });
+
+
+//export { getData, postData, putData, patchData, deleteData }
